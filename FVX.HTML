@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HOOCK CUT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0e14;
+    --white: #fff;
+    --grey-1: #F2F2F2;
+    --grey-2: #D6D6D6;
+    --grey-text: #5d6679;
+    --danger: #B00020;
+    --display: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --navy: #15161d;
+    --body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body { margin: 0; background: var(--white); color: var(--black); font-family: var(--body); font-size: 1rem; line-height: 1.55; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 750; line-height: 1.05; margin: 0; letter-spacing: -.02em; }
+  p { margin: 0; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+  h1[tabindex="-1"]:focus { outline: none; }
+  .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+
+  /* ---------- Buttons & fields ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 16px; background: linear-gradient(180deg, #2b2c37, #14151c); color: #fff; padding: 13px 22px; font-weight: 600; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 8px 18px -8px rgba(0,0,0,.55); transition: filter .15s; }
+  .btn:hover { filter: brightness(1.22); }
+  .btn-outline { background: #fff; color: var(--black); box-shadow: inset 0 0 0 2px var(--grey-2); }
+  .btn-outline:hover { background: #eef7fd; filter: none; }
+  .btn-block { width: 100%; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .field { display: grid; gap: 6px; }
+  .field label { font-weight: 600; font-size: .95rem; }
+  .field input[type="text"], .field input[type="email"], .field input[type="tel"], .field input[type="password"], .field input[type="number"], .field textarea, .field input[type="file"] {
+    width: 100%; padding: 13px 14px; border: 2px solid transparent; background: var(--grey-1); border-radius: 14px; font-size: 1rem;
+  }
+  .field input:focus, .field textarea:focus { background: #fff; border-color: #a9cde2; }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--danger); }
+  .err { color: var(--danger); font-size: .9rem; min-height: 1.2em; }
+  .form { display: grid; gap: 16px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; }
+  .check input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--navy); }
+  .muted { color: var(--grey-text); }
+  .notice { background: #eaf5fc; padding: 12px 14px; font-size: .92rem; color: var(--grey-text); border-left: 4px solid #86c6ee; border-radius: 12px; }
+
+  /* ---------- Page 1: login + register (sky card design) ---------- */
+  .auth-page { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 104px 20px 64px; font-family: "Inter", "Helvetica Neue", Arial, sans-serif; background: linear-gradient(180deg, #86c6ee 0%, #b3dbf3 34%, #d9ecf9 60%, #f5f9fd 100%); }
+  .auth-page .clouds { position: absolute; inset: auto 0 0 0; height: 48%; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(ellipse 26% 38% at 8% 78%, rgba(255,255,255,.95), rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 30% 44% at 30% 96%, rgba(255,255,255,.98), rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 34% 40% at 58% 100%, #fff, rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 28% 42% at 84% 84%, rgba(255,255,255,.95), rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 60% 30% at 50% 110%, #fff, rgba(255,255,255,0) 80%); }
+  .auth-page .arc { position: absolute; left: 50%; border: 1.5px solid rgba(255,255,255,.6); border-radius: 50%; transform: translateX(-50%); aspect-ratio: 1; z-index: -1; pointer-events: none; }
+  .auth-page .arc.a { top: 26%; width: min(1500px, 150vw); }
+  .auth-page .arc.b { top: 38%; width: min(1100px, 115vw); border-color: rgba(255,255,255,.4); }
+  .auth-logo { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 36px); left: clamp(20px, 6vw, 140px); display: flex; align-items: center; gap: 12px; color: #0d0e14; text-decoration: none; font-weight: 700; font-size: 1.6rem; letter-spacing: -.02em; }
+  .auth-logo i { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: #15161d; color: #fff; font-style: normal; font-family: var(--display); font-weight: 900; font-size: 1.7rem; line-height: 1; box-shadow: 0 6px 14px -6px rgba(0,0,0,.5); }
+  .auth-card { width: min(440px, 100%); text-align: center; padding: 44px 36px 34px; border-radius: 40px; border: 1px solid rgba(150, 210, 240, .85);
+    background: linear-gradient(180deg, #c1f0fb 0%, #e6f8fd 20%, #ffffff 46%);
+    box-shadow: 0 34px 80px -34px rgba(35, 105, 165, .45), 0 0 0 8px rgba(255, 255, 255, .28); }
+  .icon-tile { display: grid; place-items: center; width: 68px; height: 68px; margin: 0 auto 26px; border-radius: 22px; background: #f5f9fc; box-shadow: 0 10px 22px -8px rgba(30, 80, 120, .3), inset 0 1px 0 #fff; }
+  .icon-tile svg { width: 30px; height: 30px; }
+  .auth-card h1 { font-family: "Inter", Arial, sans-serif; text-transform: none; font-weight: 650; font-size: 2rem; letter-spacing: -.025em; line-height: 1.15; color: #0d0e14; }
+  .auth-sub { margin: 10px auto 28px; max-width: 30ch; color: #7a8090; font-size: 1.05rem; line-height: 1.5; }
+  .auth-card .form { text-align: left; gap: 14px; }
+  .auth-card .field { gap: 0; }
+  .input-wrap { position: relative; }
+  .auth-card .field .input-wrap input { height: 54px; padding: 0 48px; border: 2px solid transparent; border-radius: 16px; background: #f1f4f6; color: #0d0e14; font-size: 1rem; }
+  .auth-card .field .input-wrap input::placeholder { color: #8a909d; }
+  .auth-card .field .input-wrap input:focus { background: #fff; border-color: #a9cde2; }
+  .auth-card .field .input-wrap input[aria-invalid="true"] { border-color: var(--danger); }
+  .input-wrap .ico { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; color: #7d8594; pointer-events: none; }
+  .eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; background: transparent; color: #7d8594; display: grid; place-items: center; border-radius: 12px; }
+  .eye svg { width: 22px; height: 22px; }
+  .eye .on { display: none; }
+  .eye[aria-pressed="true"] .on { display: block; }
+  .eye[aria-pressed="true"] .off { display: none; }
+  .auth-card .err { font-size: .88rem; min-height: 0; margin-top: 4px; padding-left: 4px; }
+  .auth-card .err:empty { display: none; }
+  .forgot-row { display: flex; justify-content: flex-end; margin-top: -4px; }
+  .text-btn { background: none; border: 0; padding: 4px 0; color: #0d0e14; font-size: 1rem; }
+  .text-btn:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .auth-btn { height: 56px; border: 0; border-radius: 18px; width: 100%; color: #fff; font-size: 1.1rem; font-weight: 500; background: linear-gradient(180deg, #2b2c37, #14151c); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 8px 18px -8px rgba(0,0,0,.55); margin-top: 6px; transition: filter .15s; }
+  .auth-btn:hover { filter: brightness(1.18); }
+  .or { display: flex; align-items: center; gap: 14px; margin: 26px 0 18px; color: #7a8090; font-size: .95rem; }
+  .or::before, .or::after { content: ""; flex: 1; border-top: 3px dotted #d3dae2; }
+  .socials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .social { height: 58px; border: 1px solid #edf0f4; border-radius: 16px; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 12px -6px rgba(20, 40, 70, .22); transition: transform .12s; }
+  .social:hover { transform: translateY(-1px); }
+  .social svg { width: 26px; height: 26px; }
+  .social:focus-visible { outline: 3px solid #5aa9dc; outline-offset: 2px; }
+  .auth-card #socialMsg { margin-top: 12px; text-align: center; }
+  .switch { margin-top: 22px; color: #6b7280; font-size: .98rem; display: grid; gap: 6px; justify-items: center; }
+  .switch .text-btn { font-weight: 600; }
+  .switch a { color: #0d0e14; font-weight: 500; text-underline-offset: 4px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .auth-card .check { font-size: .95rem; color: #4a5060; }
+
+  /* ---------- Page 2: products (soft gradient shop, sky palette) ---------- */
+  .shop { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100dvh; font-family: var(--body);
+    background:
+      radial-gradient(55% 45% at 12% 8%, #c1f0fb 0%, rgba(193,240,251,0) 70%),
+      radial-gradient(45% 40% at 92% 18%, #9cc6f3 0%, rgba(156,198,243,0) 70%),
+      radial-gradient(60% 50% at 75% 80%, #d6d6fb 0%, rgba(214,214,251,0) 70%),
+      linear-gradient(170deg, #86c6ee 0%, #b3dbf3 40%, #e4f1fb 100%); }
+  .topbar { padding-top: 20px; }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; padding: 10px 14px 10px 16px; background: rgba(255,255,255,.55); border: 1.5px solid rgba(255,255,255,.9); border-radius: 22px; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .logo { display: flex; align-items: center; gap: 10px; color: var(--black); text-decoration: none; font-weight: 700; font-size: 1.3rem; letter-spacing: -.02em; }
+  .logo i { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #15161d; color: #fff; font-style: normal; font-weight: 800; font-size: 1.2rem; line-height: 1; box-shadow: 0 6px 14px -6px rgba(0,0,0,.5); }
+  .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .pill { border: 0; background: #fff; color: var(--navy); padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: .95rem; text-decoration: none; box-shadow: 0 4px 10px -4px rgba(20,60,110,.3); transition: background-color .15s; }
+  .pill:hover { background: #eef7fd; }
+  .pill.solid { background: linear-gradient(180deg, #2b2c37, #14151c); color: #fff; }
+  .pill.solid:hover { filter: brightness(1.2); }
+  .who { font-size: .95rem; font-weight: 500; }
+
+  .hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px; align-items: center; padding: 64px 0 40px; }
+  .frame { position: relative; border: 3px solid #fff; background: rgba(255,255,255,.3); padding: clamp(24px, 4vw, 46px); }
+  .frame h1 { font-size: clamp(3.2rem, 9vw, 6.6rem); font-weight: 800; letter-spacing: -.045em; line-height: .92; }
+  .frame p { margin-top: 20px; max-width: 30ch; font-size: 1.15rem; color: #1f2a3c; }
+  .ring { position: absolute; width: 64px; height: 64px; border: 3px solid #fff; border-radius: 50%; pointer-events: none; }
+  .ring.r1 { left: -30px; bottom: -30px; }
+  .ring.r2 { left: -8px; bottom: -44px; }
+  .mock { width: 100%; max-width: 440px; justify-self: center; filter: drop-shadow(0 28px 30px rgba(35,90,150,.32)); animation: rise .9s cubic-bezier(.2,.9,.3,1) both; }
+  @keyframes rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .stat { display: inline-flex; align-items: baseline; gap: 14px; border: 3px solid #fff; background: rgba(255,255,255,.3); padding: 10px 26px; }
+  .stat strong { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .stat span { font-weight: 600; color: #1f2a3c; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; padding: 28px 0 64px; }
+  .card { display: grid; grid-template-rows: auto 1fr; padding: 12px; background: rgba(255,255,255,.74); border: 2px solid #fff; border-radius: 30px; box-shadow: 0 24px 40px -24px rgba(35,90,150,.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .card img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; border-radius: 22px; background: #e6f2fa; }
+  .card-body { padding: 14px 8px 6px; display: grid; gap: 8px; align-content: start; grid-template-rows: auto auto 1fr auto; }
+  .card h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; }
+  .price { justify-self: start; background: var(--navy); color: #fff; border-radius: 999px; padding: 4px 14px; font-weight: 700; font-size: 1rem; }
+  .card p.desc { color: var(--grey-text); font-size: .95rem; }
+  .card-actions { display: grid; gap: 8px; margin-top: 6px; }
+  .btn-sm { padding: 11px 14px; border-radius: 14px; }
+  .btn-danger { background: #fff; color: var(--danger); box-shadow: inset 0 0 0 2px var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: #fff; filter: none; }
+  .empty { grid-column: 1 / -1; padding: 40px 0; font-size: 1.15rem; }
+  .shop-foot { padding: 0 0 40px; }
+  .shop-foot .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; color: #2b3a52; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--black); border-radius: 14px; padding: 8px 14px; font-weight: 700; box-shadow: 0 6px 14px -8px rgba(20,60,110,.4); }
+  .badge i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--navy); color: #fff; font-style: normal; font-size: .8rem; }
+
+  /* ---------- Dialogs + toast ---------- */
+  dialog { width: min(480px, calc(100% - 32px)); max-height: 92dvh; overflow: auto; border: 1px solid rgba(150,210,240,.9); border-radius: 32px; background: linear-gradient(180deg, #d4f3fc 0%, #fff 30%); color: var(--black); padding: 28px; font-family: var(--body); box-shadow: 0 40px 80px -30px rgba(20,60,110,.5); }
+  dialog::backdrop { background: rgba(15,35,70,.55); }
+  dialog h2 { font-size: 1.9rem; font-weight: 700; margin-bottom: 16px; }
+  .close-x { float: right; background: transparent; border: 0; font-size: 1.8rem; line-height: 1; padding: 0 4px; color: var(--black); }
+  .lines { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 10px; }
+  .lines li { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 2px solid #e3ebf2; padding-bottom: 10px; }
+  .linkish { background: none; border: 0; text-decoration: underline; padding: 0; font-size: .9rem; color: var(--grey-text); }
+  .total-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .total-row strong { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
+  .dlg-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .dlg-actions .btn { flex: 1; }
+  .visa-badge { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; margin-bottom: 14px; }
+  .visa-badge b { background: #1A1F71; color: #fff; font-style: italic; padding: 2px 10px; border-radius: 6px; letter-spacing: .05em; }
+  .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); transform: translate(-50%, 24px); background: var(--navy); color: #fff; padding: 12px 20px; font-weight: 600; border-radius: 14px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; max-width: calc(100% - 32px); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 860px) {
+    .row2 { grid-template-columns: 1fr; }
+    .hero { grid-template-columns: 1fr; padding-top: 44px; }
+    .mock { max-width: 340px; }
+  }
+  @media (max-width: 520px) {
+    .auth-page { padding-top: 96px; }
+    .auth-card { padding: 36px 20px 28px; border-radius: 32px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1: LOGIN + REGISTER ================= -->
+<main id="pageLogin" class="auth-page" hidden>
+  <div class="clouds" aria-hidden="true"></div>
+  <div class="arc a" aria-hidden="true"></div>
+  <div class="arc b" aria-hidden="true"></div>
+  <a class="auth-logo" href="#/login" aria-label="HOOCK CUT"><i aria-hidden="true">H</i> HOOCK CUT</a>
+
+  <section class="auth-card">
+    <div class="icon-tile" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1b1c24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h11M10 7l5 5-5 5"/><path d="M14 4h3a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-3"/></svg>
+    </div>
+    <h1 id="loginHeading" tabindex="-1">Sign in with email</h1>
+    <p class="auth-sub" id="loginSub">Sign in to fill your basket and check out faster.</p>
+
+    <div id="panelLogin">
+      <form class="form" id="loginForm" novalidate>
+        <div class="field">
+          <label class="sr-only" for="liEmail">Email</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v.4l-10 6.3L2 6.4V6a1 1 0 0 1 1-1zm19 3.7V18a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8.7l9.5 6a1 1 0 0 0 1 0L22 8.7z"/></svg>
+            <input type="email" id="liEmail" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="err" id="liEmailE"></div>
+        </div>
+        <div class="field">
+          <label class="sr-only" for="liPass">Password</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1zm2 0h6V7a3 3 0 0 0-6 0v3zm3 4a1.5 1.5 0 0 0-.75 2.8V19h1.5v-2.2A1.5 1.5 0 0 0 12 14z"/></svg>
+            <input type="password" id="liPass" placeholder="Password" autocomplete="current-password">
+            <button class="eye" type="button" data-eye="liPass" aria-label="Show password" aria-pressed="false">
+              <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7c2 0 3.7.7 5.1 1.6M22 12s-3.6 7-10 7c-2 0-3.7-.7-5.1-1.6"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>
+              <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="err" id="liPassE"></div>
+        </div>
+        <div class="forgot-row"><button class="text-btn" type="button" id="forgotBtn">Forgot password?</button></div>
+        <div class="err" id="liFormE" role="alert"></div>
+        <button class="auth-btn" type="submit">Log in</button>
+      </form>
+    </div>
+
+    <div id="panelReg" hidden>
+      <form class="form" id="regForm" novalidate>
+        <div class="field">
+          <label class="sr-only" for="rgName">Full name</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5z"/></svg>
+            <input type="text" id="rgName" placeholder="Full name" autocomplete="name">
+          </div>
+          <div class="err" id="rgNameE"></div>
+        </div>
+        <div class="field">
+          <label class="sr-only" for="rgEmail">Email</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v.4l-10 6.3L2 6.4V6a1 1 0 0 1 1-1zm19 3.7V18a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8.7l9.5 6a1 1 0 0 0 1 0L22 8.7z"/></svg>
+            <input type="email" id="rgEmail" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="err" id="rgEmailE"></div>
+        </div>
+        <div class="field">
+          <label class="sr-only" for="rgPhone">Phone number</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>
+            <input type="tel" id="rgPhone" placeholder="Phone number" autocomplete="tel">
+          </div>
+          <div class="err" id="rgPhoneE"></div>
+        </div>
+        <div class="field">
+          <label class="sr-only" for="rgPass">Password</label>
+          <div class="input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1zm2 0h6V7a3 3 0 0 0-6 0v3zm3 4a1.5 1.5 0 0 0-.75 2.8V19h1.5v-2.2A1.5 1.5 0 0 0 12 14z"/></svg>
+            <input type="password" id="rgPass" placeholder="Password (8+ characters)" autocomplete="new-password">
+            <button class="eye" type="button" data-eye="rgPass" aria-label="Show password" aria-pressed="false">
+              <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7c2 0 3.7.7 5.1 1.6M22 12s-3.6 7-10 7c-2 0-3.7-.7-5.1-1.6"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>
+              <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="err" id="rgPassE"></div>
+        </div>
+        <div class="field">
+          <label class="check"><input type="checkbox" id="rgTerms"><span>I agree to the terms and privacy policy.</span></label>
+          <div class="err" id="rgTermsE"></div>
+        </div>
+        <div class="err" id="rgFormE" role="alert"></div>
+        <button class="auth-btn" type="submit">Create account</button>
+      </form>
+    </div>
+
+    <div class="or">Or sign in with</div>
+    <div class="socials">
+      <button class="social" type="button" id="googleBtn" aria-label="Continue with Google">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+      </button>
+      <button class="social" type="button" id="fbBtn" aria-label="Continue with Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </button>
+      <button class="social" type="button" id="appleBtn" aria-label="Continue with Apple">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+      </button>
+    </div>
+    <div class="err" id="socialMsg" role="status"></div>
+
+    <div class="switch">
+      <span><span id="switchText">New to HOOCK CUT?</span> <button class="text-btn" type="button" id="switchBtn">Create an account</button></span>
+      <a href="#/products">Browse products first</a>
+    </div>
+  </section>
+</main>
+
+<!-- ================= PAGE 2: PRODUCTS ================= -->
+<main id="pageProducts" class="shop" hidden>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="logo" href="#/products" aria-label="HOOCK CUT, products"><i aria-hidden="true">H</i> HOOCK CUT</a>
+      <div class="top-actions">
+        <span class="who" id="who"></span>
+        <a class="pill" id="loginLink" href="#/login">Log in or register</a>
+        <button class="pill" id="logoutBtn" type="button" hidden>Log out</button>
+        <button class="pill" id="adminBtn" type="button">Admin</button>
+        <button class="pill solid" id="basketBtn" type="button">Basket (<span id="basketCount">0</span>)</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="frame">
+        <h1 id="productsHeading" tabindex="-1">Products</h1>
+        <p>Pick what you like, add it to your basket and pay with Visa.</p>
+        <span class="ring r1" aria-hidden="true"></span><span class="ring r2" aria-hidden="true"></span>
+      </div>
+      <svg class="mock" viewBox="0 0 440 320" role="img" aria-label="Illustration of an online shop window with a Buy button">
+        <rect x="26" y="46" width="320" height="200" rx="26" fill="#fff" opacity=".92"/>
+        <circle cx="54" cy="72" r="6" fill="#c1f0fb"/><circle cx="74" cy="72" r="6" fill="#b3dbf3"/><circle cx="94" cy="72" r="6" fill="#86c6ee"/>
+        <rect x="56" y="100" width="92" height="72" rx="18" fill="#86c6ee"/>
+        <circle cx="102" cy="136" r="22" fill="#fff"/><circle cx="102" cy="136" r="11" fill="#15161d"/>
+        <rect x="168" y="106" width="130" height="12" rx="6" fill="#d9ecf9"/>
+        <rect x="168" y="130" width="96" height="12" rx="6" fill="#d9ecf9"/>
+        <rect x="56" y="192" width="92" height="12" rx="6" fill="#d9ecf9"/>
+        <rect x="200" y="182" width="124" height="46" rx="15" fill="#15161d"/>
+        <text x="262" y="213" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="21" fill="#fff">BUY</text>
+        <circle cx="330" cy="54" r="26" fill="#fff" stroke="#86c6ee" stroke-width="4"/>
+        <text x="330" y="63" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="26" fill="#15161d">%</text>
+        <g stroke="#5aa9dc" stroke-width="3" fill="#c1f0fb">
+          <ellipse cx="384" cy="262" rx="34" ry="12"/><ellipse cx="384" cy="247" rx="34" ry="12"/><ellipse cx="384" cy="232" rx="34" ry="12"/>
+        </g>
+        <g fill="#fff"><g transform="translate(6 10) scale(1.1)"><path d="M12 0C13 7 17 11 24 12 17 13 13 17 12 24 11 17 7 13 0 12 7 11 11 7 12 0Z"/></g><g transform="translate(394 120) scale(.8)"><path d="M12 0C13 7 17 11 24 12 17 13 13 17 12 24 11 17 7 13 0 12 7 11 11 7 12 0Z"/></g><g transform="translate(40 268) scale(.7)"><path d="M12 0C13 7 17 11 24 12 17 13 13 17 12 24 11 17 7 13 0 12 7 11 11 7 12 0Z"/></g></g>
+      </svg>
+    </section>
+
+    <div class="toolbar">
+      <div class="stat"><strong id="countNum">0</strong><span id="countLine">products</span></div>
+      <button class="btn" id="addProductBtn" type="button" hidden>Add product</button>
+    </div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </div>
+
+  <footer class="shop-foot">
+    <div class="wrap">
+      <span class="badge"><i aria-hidden="true">H</i> HOOCK CUT</span>
+      <span>hello@hoockcut.example</span>
+    </div>
+  </footer>
+</main>
+
+<!-- ================= DIALOGS ================= -->
+<dialog id="basketDlg" aria-labelledby="basketTitle">
+  <button class="close-x" type="button" data-close="basketDlg" aria-label="Close">×</button>
+  <h2 id="basketTitle">Your basket</h2>
+  <ul class="lines" id="lines"></ul>
+  <div class="total-row"><span>Total</span><strong id="dlgTotal">$0.00</strong></div>
+  <div class="dlg-actions">
+    <button class="btn btn-outline" type="button" data-close="basketDlg">Keep browsing</button>
+    <button class="btn" type="button" id="checkout">Check out</button>
+  </div>
+</dialog>
+
+<dialog id="payDlg" aria-labelledby="payTitle">
+  <button class="close-x" type="button" data-close="payDlg" aria-label="Close">×</button>
+  <h2 id="payTitle">Pay with Visa</h2>
+  <p class="visa-badge"><b>VISA</b> <span id="payAmount"></span></p>
+  <form class="form" id="payForm" novalidate>
+    <div class="field"><label for="cardName">Name on card</label><input type="text" id="cardName" autocomplete="cc-name"><div class="err" id="cardNameE"></div></div>
+    <div class="field"><label for="cardNum">Card number</label><input type="text" id="cardNum" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="23"><div class="err" id="cardNumE"></div></div>
+    <div class="row2">
+      <div class="field"><label for="cardExp">Expiry (MM/YY)</label><input type="text" id="cardExp" inputmode="numeric" autocomplete="cc-exp" placeholder="08/29" maxlength="5"><div class="err" id="cardExpE"></div></div>
+      <div class="field"><label for="cardCvc">CVC</label><input type="password" id="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="3"><div class="err" id="cardCvcE"></div></div>
+    </div>
+    <div class="notice">Card details are checked in your browser only and are never saved or sent anywhere by this page. To take real payments, connect a payment provider.</div>
+    <button class="btn btn-block" type="submit" id="payBtn">Pay now</button>
+  </form>
+</dialog>
+
+<dialog id="adminDlg" aria-labelledby="adminTitle">
+  <button class="close-x" type="button" data-close="adminDlg" aria-label="Close">×</button>
+  <h2 id="adminTitle">Admin</h2>
+  <form class="form" id="adminForm" novalidate>
+    <div class="field"><label for="adminPass">Admin password</label><input type="password" id="adminPass" autocomplete="off"><div class="err" id="adminPassE"></div></div>
+    <button class="btn btn-block" type="submit">Unlock</button>
+  </form>
+</dialog>
+
+<dialog id="productDlg" aria-labelledby="productTitle">
+  <button class="close-x" type="button" data-close="productDlg" aria-label="Close">×</button>
+  <h2 id="productTitle">Add a product</h2>
+  <form class="form" id="productForm" novalidate>
+    <div class="field"><label for="pName">Product name</label><input type="text" id="pName" maxlength="60"><div class="err" id="pNameE"></div></div>
+    <div class="field"><label for="pPrice">Price (USD)</label><input type="number" id="pPrice" min="0" step="0.01" inputmode="decimal"><div class="err" id="pPriceE"></div></div>
+    <div class="field"><label for="pDesc">Description</label><textarea id="pDesc" maxlength="240"></textarea><div class="err" id="pDescE"></div></div>
+    <div class="field"><label for="pImg">Photo (optional)</label><input type="file" id="pImg" accept="image/*"><div class="err" id="pImgE"></div></div>
+    <button class="btn btn-block" type="submit" id="pSave">Save product</button>
+  </form>
+</dialog>
+
+<dialog id="demoDlg" aria-labelledby="demoTitle">
+  <button class="close-x" type="button" data-close="demoDlg" aria-label="Close">×</button>
+  <h2 id="demoTitle">Continue with Google</h2>
+  <form class="form" id="demoForm" novalidate>
+    <div class="field"><label for="demoName">Your name</label><input type="text" id="demoName" autocomplete="name"><div class="err" id="demoNameE"></div></div>
+    <div class="field"><label for="demoEmail">Your email</label><input type="email" id="demoEmail" autocomplete="email"><div class="err" id="demoEmailE"></div></div>
+    <div class="notice" id="demoNote"></div>
+    <button class="btn btn-block" type="submit">Continue</button>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =====================================================================
+   HOOCK CUT: configuration
+   - googleClientId: paste your Google OAuth client ID to turn on "Continue with Google".
+   - adminHash: SHA-256 of "hoockcut-admin-v1:" + your password.
+     To make a new one, open the browser console on any page and run:
+       crypto.subtle.digest("SHA-256", new TextEncoder().encode("hoockcut-admin-v1:YOUR_PASSWORD"))
+         .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("")))
+   IMPORTANT: everything here runs in the visitor's browser, so this admin gate and the
+   saved accounts/products are a demo. A live shop must check the admin password, store
+   accounts and products, and verify Google tokens on a server.
+   ===================================================================== */
+const CONFIG = {
+  currency: "USD",
+  googleClientId: "",
+  adminHash: "c2adbff1f4a4e0d1edf9e433b897c076ba2f5f7849ba5c4a60dba2ad2a528749"
+};
+
+const $ = (id) => document.getElementById(id);
+const money = (n) => new Intl.NumberFormat("en-US", { style: "currency", currency: CONFIG.currency }).format(n);
+
+function el(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  kids.forEach((c) => n.append(c));
+  return n;
+}
+
+/* ---------- storage (per browser) ---------- */
+const store = {
+  get(k, fallback) { try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+const sess = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { sessionStorage.removeItem(k); } catch (e) {} }
+};
+
+let toastTimer;
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
+}
+function setErr(id, msg) {
+  $(id + "E").textContent = msg || "";
+  const inp = $(id);
+  if (inp) inp.setAttribute("aria-invalid", msg ? "true" : "false");
+}
+document.querySelectorAll("[data-close]").forEach((b) =>
+  b.addEventListener("click", () => $(b.dataset.close).close()));
+
+/* ---------- crypto helpers ---------- */
+const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+const fromHex = (h) => new Uint8Array(h.match(/.{2}/g).map((x) => parseInt(x, 16)));
+async function hashPassword(pass, saltHex) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: fromHex(saltHex), iterations: 150000 }, key, 256);
+  return hex(bits);
+}
+async function sha256(text) { return hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text))); }
+const cryptoOk = () => !!(window.crypto && crypto.subtle);
+
+/* ---------- state ---------- */
+let users = store.get("hc_users", {});
+let sessionEmail = store.get("hc_session", null);
+let cart = [];
+let adminUnlocked = sess.get("hc_admin") === "1";
+
+function placeholder(name) {
+  const ch = (name.trim()[0] || "H");
+  const letter = /[A-Za-z0-9]/.test(ch) ? ch.toUpperCase() : "H";
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#86c6ee"/><stop offset="1" stop-color="#d9ecf9"/></linearGradient></defs>' +
+    '<rect width="400" height="500" fill="url(#g)"/><circle cx="312" cy="112" r="72" fill="none" stroke="#fff" stroke-width="6"/>' +
+    '<text x="200" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="230" fill="#fff">' + letter + '</text></svg>';
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+let products = store.get("hc_products", null);
+if (!products) {
+  products = [
+    { id: "p1", name: "Classic black tee", price: 25, desc: "Heavy cotton, straight cut. Sample product: replace it in admin.", image: "" },
+    { id: "p2", name: "White crew sweat", price: 45, desc: "Brushed inside, ribbed cuffs. Sample product: replace it in admin.", image: "" },
+    { id: "p3", name: "Hook cap", price: 18, desc: "Six panels, adjustable strap. Sample product: replace it in admin.", image: "" }
+  ];
+  store.set("hc_products", products);
+}
+
+const currentUser = () => (sessionEmail && users[sessionEmail]) ? users[sessionEmail] : null;
+
+/* ---------- routing: two pages ---------- */
+function route() {
+  const wantProducts = location.hash.startsWith("#/products");
+  if (!wantProducts && currentUser()) { location.hash = "#/products"; return; }
+  if (!location.hash) { location.hash = currentUser() ? "#/products" : "#/login"; return; }
+  $("pageLogin").hidden = wantProducts;
+  $("pageProducts").hidden = !wantProducts;
+  document.title = wantProducts ? "Products – HOOCK CUT" : "Log in – HOOCK CUT";
+  window.scrollTo(0, 0);
+  if (wantProducts) { renderUserBar(); renderProducts(); }
+  const h = $(wantProducts ? "productsHeading" : "loginHeading");
+  if (h) h.focus({ preventScroll: true });
+}
+window.addEventListener("hashchange", route);
+
+/* ---------- login / register mode ---------- */
+const MODES = {
+  login: { h: "Sign in with email", sub: "Sign in to fill your basket and check out faster.", text: "New to HOOCK CUT?", btn: "Create an account" },
+  reg:   { h: "Create your account", sub: "It takes a minute. You'll use it to check out.", text: "Already have an account?", btn: "Log in" }
+};
+function showMode(which) {
+  const m = MODES[which];
+  $("panelLogin").hidden = which !== "login";
+  $("panelReg").hidden = which === "login";
+  $("loginHeading").textContent = m.h;
+  $("loginSub").textContent = m.sub;
+  $("switchText").textContent = m.text;
+  $("switchBtn").textContent = m.btn;
+  $("socialMsg").textContent = "";
+}
+$("switchBtn").addEventListener("click", () => showMode($("panelLogin").hidden ? "login" : "reg"));
+
+document.querySelectorAll("[data-eye]").forEach((b) => b.addEventListener("click", () => {
+  const input = $(b.dataset.eye);
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  b.setAttribute("aria-pressed", show);
+  b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+}));
+$("forgotBtn").addEventListener("click", () => toast("Password reset needs an email service. It isn't connected yet."));
+[["fbBtn", "Facebook"], ["appleBtn", "Apple"]].forEach(([id, name]) =>
+  $(id).addEventListener("click", () => openDemo(name)));
+
+/* ---------- social sign-in, demo mode ----------
+   Until real provider keys are added (Google: CONFIG.googleClientId; Facebook and Apple need an
+   app registered with them plus a server), these buttons open a simple form. It does NOT check
+   anything with Google, Facebook or Apple. */
+let demoProvider = "";
+function openDemo(name) {
+  demoProvider = name;
+  $("demoTitle").textContent = "Continue with " + name;
+  $("demoNote").textContent = "Demo mode: this doesn't check with " + name + ". Real " + name + " sign-in switches on once the site is connected to it.";
+  setErr("demoName", ""); setErr("demoEmail", "");
+  $("demoDlg").showModal();
+  $("demoName").focus();
+}
+$("demoForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = $("demoName").value.trim(), email = $("demoEmail").value.trim().toLowerCase();
+  let ok = true;
+  const check = (id, bad, msg) => { setErr(id, bad ? msg : ""); if (bad) ok = false; };
+  check("demoName", name.length < 2, "Enter your name.");
+  check("demoEmail", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email), "Enter a valid email address.");
+  if (!ok) return;
+  const existing = users[email];
+  if (existing && !String(existing.provider || "").endsWith("-demo")) {
+    setErr("demoEmail", "This email already belongs to another account. Use its original sign-in.");
+    return;
+  }
+  if (!existing) users[email] = { name, email, phone: "", provider: demoProvider.toLowerCase() + "-demo" };
+  if (!store.set("hc_users", users)) { setErr("demoEmail", "Couldn't save your account in this browser."); return; }
+  $("demoForm").reset();
+  $("demoDlg").close();
+  toast("Signed in with " + demoProvider + ".");
+  signIn(email);
+});
+
+/* ---------- register ---------- */
+function signIn(email) {
+  sessionEmail = email;
+  store.set("hc_session", email);
+  location.hash = "#/products";
+}
+$("regForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("rgName").value.trim(), email = $("rgEmail").value.trim().toLowerCase(),
+        phone = $("rgPhone").value.trim(), pass = $("rgPass").value;
+  let ok = true;
+  const check = (id, bad, msg) => { setErr(id, bad ? msg : ""); if (bad) ok = false; };
+  check("rgName", name.length < 2, "Enter your full name.");
+  check("rgEmail", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email), "Enter a valid email address.");
+  check("rgPhone", phone.replace(/\D/g, "").length < 9, "Enter a phone number with at least 9 digits.");
+  check("rgPass", pass.length < 8, "Use at least 8 characters.");
+  $("rgTermsE").textContent = $("rgTerms").checked ? "" : "Tick the box to continue.";
+  if (!$("rgTerms").checked) ok = false;
+  $("rgFormE").textContent = "";
+  if (!ok) return;
+  if (!cryptoOk()) { $("rgFormE").textContent = "This browser can't secure passwords here. Open the page over https."; return; }
+  if (users[email]) { $("rgFormE").textContent = "An account with this email already exists. Log in instead."; return; }
+  const salt = hex(crypto.getRandomValues(new Uint8Array(16)));
+  users[email] = { name, email, phone, salt, hash: await hashPassword(pass, salt), provider: "password" };
+  if (!store.set("hc_users", users)) { delete users[email]; $("rgFormE").textContent = "Couldn't save your account in this browser."; return; }
+  $("regForm").reset();
+  toast("Account created. Welcome, " + name.split(" ")[0] + ".");
+  signIn(email);
+});
+
+/* ---------- login ---------- */
+$("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("liEmail").value.trim().toLowerCase(), pass = $("liPass").value;
+  setErr("liEmail", email ? "" : "Enter your email.");
+  setErr("liPass", pass ? "" : "Enter your password.");
+  $("liFormE").textContent = "";
+  if (!email || !pass) return;
+  if (!cryptoOk()) { $("liFormE").textContent = "This browser can't check passwords here. Open the page over https."; return; }
+  const u = users[email];
+  const good = u && u.hash && (await hashPassword(pass, u.salt)) === u.hash;
+  if (!good) { $("liFormE").textContent = "Email or password is incorrect."; return; }
+  $("loginForm").reset();
+  toast("Welcome back, " + u.name.split(" ")[0] + ".");
+  signIn(email);
+});
+
+/* ---------- Continue with Google ---------- */
+function parseJwt(token) {
+  const b = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  return JSON.parse(decodeURIComponent(atob(b).split("").map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")));
+}
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src; s.async = true; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+function onGoogleCredential(resp) {
+  try {
+    // In production, send resp.credential to your server and verify it there before trusting it.
+    const p = parseJwt(resp.credential);
+    const email = String(p.email || "").toLowerCase();
+    if (!email) throw new Error("no email");
+    if (!users[email]) users[email] = { name: p.name || email, email, phone: "", provider: "google" };
+    store.set("hc_users", users);
+    toast("Signed in with Google.");
+    signIn(email);
+  } catch (err) {
+    $("socialMsg").textContent = "Google sign-in didn't complete. Try again.";
+  }
+}
+$("googleBtn").addEventListener("click", async () => {
+  $("socialMsg").textContent = "";
+  if (!CONFIG.googleClientId) {
+    openDemo("Google");
+    return;
+  }
+  try {
+    await loadScript("https://accounts.google.com/gsi/client");
+    google.accounts.id.initialize({ client_id: CONFIG.googleClientId, callback: onGoogleCredential });
+    google.accounts.id.prompt();
+  } catch (err) {
+    $("socialMsg").textContent = "Couldn't reach Google from this page. Host the site on your own domain and try again.";
+  }
+});
+
+/* ---------- user bar ---------- */
+function renderUserBar() {
+  const u = currentUser();
+  $("who").textContent = u ? "Hi, " + u.name.split(" ")[0] : "";
+  $("loginLink").hidden = !!u;
+  $("logoutBtn").hidden = !u;
+  $("adminBtn").textContent = adminUnlocked ? "Lock admin" : "Admin";
+  $("addProductBtn").hidden = !adminUnlocked;
+}
+$("logoutBtn").addEventListener("click", () => {
+  sessionEmail = null; store.del("hc_session");
+  toast("Logged out.");
+  location.hash = "#/login";
+  route();
+});
+
+/* ---------- products ---------- */
+let removeArmed = null, removeTimer;
+function renderProducts() {
+  const grid = $("grid");
+  grid.replaceChildren();
+  $("countNum").textContent = products.length;
+  $("countLine").textContent = products.length === 1 ? "product" : "products";
+  if (!products.length) {
+    grid.append(el("p", { class: "empty", text: adminUnlocked ? "No products yet. Use “Add product” to list the first one." : "No products yet. Check back soon." }));
+    return;
+  }
+  products.forEach((p) => {
+    const src = /^data:image\//.test(p.image || "") ? p.image : placeholder(p.name);
+    const add = el("button", { class: "btn btn-sm", type: "button", text: "Add to basket" });
+    add.addEventListener("click", () => addToCart(p.id));
+    const actions = el("div", { class: "card-actions" }, add);
+    if (adminUnlocked) {
+      const rm = el("button", { class: "btn btn-sm btn-danger", type: "button", text: removeArmed === p.id ? "Tap again to remove" : "Remove product" });
+      rm.addEventListener("click", () => {
+        if (removeArmed === p.id) {
+          products = products.filter((x) => x.id !== p.id);
+          store.set("hc_products", products);
+          cart = cart.filter((c) => c.id !== p.id);
+          removeArmed = null; renderProducts(); renderCart();
+          toast("Product removed.");
+        } else {
+          removeArmed = p.id; renderProducts();
+          clearTimeout(removeTimer);
+          removeTimer = setTimeout(() => { removeArmed = null; renderProducts(); }, 3500);
+        }
+      });
+      actions.append(rm);
+    }
+    const img = el("img", { alt: p.name, loading: "lazy" });
+    img.src = src;
+    grid.append(el("article", { class: "card" },
+      img,
+      el("div", { class: "card-body" },
+        el("h3", { text: p.name }),
+        el("p", { class: "price", text: money(p.price) }),
+        el("p", { class: "desc", text: p.desc || "" }),
+        actions)));
+  });
+}
+
+/* ---------- admin ---------- */
+$("adminBtn").addEventListener("click", () => {
+  if (adminUnlocked) {
+    adminUnlocked = false; sess.del("hc_admin");
+    renderUserBar(); renderProducts(); toast("Admin locked.");
+  } else {
+    setErr("adminPass", "");
+    $("adminDlg").showModal();
+    $("adminPass").focus();
+  }
+});
+$("adminForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const pw = $("adminPass").value;
+  if (!cryptoOk()) { setErr("adminPass", "This browser can't check the password here. Open the page over https."); return; }
+  if ((await sha256("hoockcut-admin-v1:" + pw)) !== CONFIG.adminHash) { setErr("adminPass", "Wrong admin password."); return; }
+  adminUnlocked = true; sess.set("hc_admin", "1");
+  $("adminForm").reset(); setErr("adminPass", "");
+  $("adminDlg").close();
+  renderUserBar(); renderProducts();
+  toast("Admin unlocked. You can add and remove products.");
+});
+$("addProductBtn").addEventListener("click", () => {
+  if (!adminUnlocked) return;
+  ["pName", "pPrice", "pDesc", "pImg"].forEach((id) => setErr(id, ""));
+  $("productDlg").showModal();
+  $("pName").focus();
+});
+
+function fileToDataUrl(file) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = () => rej(fr.error);
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => rej(new Error("bad image"));
+      img.onload = () => {
+        const r = Math.min(1, 640 / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+$("productForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!adminUnlocked) return;
+  const name = $("pName").value.trim(), price = parseFloat($("pPrice").value), desc = $("pDesc").value.trim();
+  const file = $("pImg").files[0];
+  let ok = true;
+  const check = (id, bad, msg) => { setErr(id, bad ? msg : ""); if (bad) ok = false; };
+  check("pName", name.length < 2, "Enter a product name.");
+  check("pPrice", !(price > 0), "Enter a price above zero.");
+  check("pImg", file && !file.type.startsWith("image/"), "Choose an image file.");
+  if (!ok) return;
+  let image = "";
+  if (file) {
+    try { image = await fileToDataUrl(file); } catch (err) { setErr("pImg", "Couldn't read that image. Try another."); return; }
+  }
+  const item = { id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, price: Math.round(price * 100) / 100, desc, image };
+  products.unshift(item);
+  if (!store.set("hc_products", products)) {
+    products.shift();
+    setErr("pImg", "Couldn't save. The photo may be too large; try a smaller one or none.");
+    return;
+  }
+  $("productForm").reset();
+  $("productDlg").close();
+  renderProducts();
+  toast("Product added.");
+});
+
+/* ---------- basket ---------- */
+const cartTotal = () => cart.reduce((s, l) => { const p = products.find((x) => x.id === l.id); return s + (p ? p.price * l.qty : 0); }, 0);
+function addToCart(id) {
+  const line = cart.find((l) => l.id === id);
+  if (line) line.qty += 1; else cart.push({ id, qty: 1 });
+  renderCart();
+  const p = products.find((x) => x.id === id);
+  toast("Added " + (p ? p.name : "item") + " to basket");
+}
+function renderCart() {
+  cart = cart.filter((l) => products.some((p) => p.id === l.id));
+  $("basketCount").textContent = cart.reduce((s, l) => s + l.qty, 0);
+  const list = $("lines");
+  list.replaceChildren();
+  if (!cart.length) list.append(el("li", { text: "Your basket is empty." }));
+  cart.forEach((l) => {
+    const p = products.find((x) => x.id === l.id);
+    const rm = el("button", { class: "linkish", type: "button", text: "Remove" });
+    rm.addEventListener("click", () => { cart = cart.filter((x) => x.id !== l.id); renderCart(); });
+    list.append(el("li", {},
+      el("span", { text: l.qty + " × " + p.name }),
+      el("span", {}, money(p.price * l.qty) + " ", rm)));
+  });
+  $("dlgTotal").textContent = money(cartTotal());
+}
+$("basketBtn").addEventListener("click", () => { renderCart(); $("basketDlg").showModal(); });
+
+/* ---------- checkout + Visa ---------- */
+// Integration point: replace with your provider's hosted card fields (Stripe Elements, Flutterwave, Selcom...).
+// Never send raw card numbers to your own server.
+const PaymentProvider = {
+  async charge(/* { amount, currency, customer } */) {
+    return { ok: false, reason: "No payment provider is connected yet." };
+  }
+};
+const luhn = (num) => {
+  let sum = 0, alt = false;
+  for (let i = num.length - 1; i >= 0; i--) { let d = +num[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } sum += d; alt = !alt; }
+  return sum % 10 === 0;
+};
+$("cardNum").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 19).replace(/(.{4})/g, "$1 ").trim(); });
+$("cardExp").addEventListener("input", (e) => {
+  let d = e.target.value.replace(/\D/g, "").slice(0, 4);
+  if (d.length >= 3) d = d.slice(0, 2) + "/" + d.slice(2);
+  e.target.value = d;
+});
+$("cardCvc").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3); });
+
+$("checkout").addEventListener("click", () => {
+  $("basketDlg").close();
+  if (!cart.length) { toast("Add a product first."); return; }
+  if (!currentUser()) { toast("Log in or create an account to check out."); location.hash = "#/login"; return; }
+  $("payAmount").textContent = "Total " + money(cartTotal());
+  $("payDlg").showModal();
+});
+$("payForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("cardName").value.trim(), num = $("cardNum").value.replace(/\s/g, ""),
+        exp = $("cardExp").value, cvc = $("cardCvc").value;
+  let ok = true;
+  const check = (id, bad, msg) => { setErr(id, bad ? msg : ""); if (bad) ok = false; };
+  check("cardName", name.length < 2, "Enter the name on the card.");
+  check("cardNum", !(num[0] === "4" && [13, 16, 19].includes(num.length) && luhn(num)), "Enter a valid Visa card number (starts with 4).");
+  const mm = +exp.slice(0, 2), yy = 2000 + +exp.slice(3, 5), now = new Date();
+  const bad = !/^\d{2}\/\d{2}$/.test(exp) || mm < 1 || mm > 12 || yy < now.getFullYear() || (yy === now.getFullYear() && mm < now.getMonth() + 1);
+  check("cardExp", bad, "Enter a valid future date.");
+  check("cardCvc", cvc.length !== 3, "Enter the 3-digit code on the back.");
+  if (!ok) return;
+  const btn = $("payBtn");
+  btn.disabled = true; btn.textContent = "Checking…";
+  const result = await PaymentProvider.charge({ amount: cartTotal(), currency: CONFIG.currency, customer: currentUser() });
+  btn.disabled = false; btn.textContent = "Pay now";
+  $("payForm").reset();
+  $("payDlg").close();
+  if (result.ok) { cart = []; renderCart(); toast("Payment received. Thank you."); }
+  else toast("Card looks valid, but nothing was charged. " + result.reason);
+});
+
+/* ---------- start ---------- */
+renderCart();
+route();
+</script>
+</body>
+</html>
